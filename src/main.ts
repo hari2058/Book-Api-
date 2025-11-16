@@ -14,7 +14,7 @@ import express from "express";
 interface BookApi {
   id: number;
   Title: string;
-  Aurthor: string;
+  Author: string;
   Genre: string;
   Status: "COMPLETED" | "ONGOING" | "DROPPED";
   Date: number;
@@ -42,15 +42,64 @@ app.post("/bookapi", (req, res) => {
   });
 });
 
-//Get all book information from book api
+//Get all book information from book api also filter using author and genre
 app.get("/bookapi", (req, res) => {
+  const { Author, Genre } = req.query;
+  const query = req.query;
+  console.log("Query Received", query);
+
+  const authorName = Author;
+  const genreName = Genre;
+
+  let result = BooksApi;
+
+  if (!query.Author && !query.Genre) {
+    return res.json({
+      message: "Books Information Fetched",
+      data: BooksApi,
+    });
+  }
+
+  let authorResult: BookApi[] = [];
+  let genreResult: BookApi[] = [];
+
+  if (Author) {
+    const author = BooksApi.filter((BookApi) => {
+      if (authorName === BookApi.Author) return true;
+      else return false;
+    });
+
+    if (author.length === 0) {
+      return res.status(404).json({
+        message: `Match not found for author '${Author}'.`,
+      });
+    }
+    authorResult = author;
+  }
+
+  if (Genre) {
+    const genre = BooksApi.filter((BookApi) => {
+      if (genreName === BookApi.Genre) return true;
+      else return false;
+    });
+    if (genre.length === 0) {
+      return res.status(404).json({
+        message: `Match not found for genre '${Genre}'.`,
+      });
+    }
+
+    genreResult = genre;
+  }
+
   res.json({
-    message: "Books information fetched.",
-    Data: BooksApi,
+    message: `Book Fetched`,
+    authorData: Author ? authorResult : undefined,
+    genreData: Genre ? genreResult : undefined,
   });
+  return;
 });
 
-//Get book information by id from boo api stores
+//Get book information by id from book api stores
 
 app.get("/bookapi/:bookId", (req, res) => {
   const params = req.params;
