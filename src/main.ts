@@ -10,6 +10,7 @@ update a book
  */
 
 import express from "express";
+import { start } from "repl";
 
 interface BookApi {
   id: number;
@@ -21,7 +22,7 @@ interface BookApi {
 }
 // const body: BookApi = [];
 
-const BooksApi: BookApi[] = [];
+let BooksApi: BookApi[] = [];
 const app = express();
 
 app.use(express.json());
@@ -100,7 +101,6 @@ app.get("/bookapi", (req, res) => {
 });
 
 //Get book information by id from book api stores
-
 app.get("/bookapi/:bookId", (req, res) => {
   const params = req.params;
   console.log("params", params);
@@ -155,6 +155,67 @@ const book = BooksApi.find((BookApi) => {
   });
 
 */
+});
+
+app.delete("/bookapi/:bookId", (req, res) => {
+  const params = req.params;
+  console.log("Params", params);
+
+  const bookId = parseInt(params.bookId);
+
+  const bookIdx = BooksApi.findIndex((BookApi) => {
+    if (bookId === BookApi.id) return true;
+    else return false;
+  });
+
+  if (bookIdx === -1) {
+    return res.json({
+      message: `Book not found by id ${bookId}`,
+    });
+  }
+
+  const splicedBook = BooksApi.splice(bookIdx, 1);
+  console.log("Sliced Book", splicedBook);
+
+  res.json({
+    message: "Deleted Book From Books Store",
+    Data: splicedBook,
+  });
+});
+
+app.put("/bookapi/:bookId", (req, res) => {
+  const body: BookApi = req.body;
+  const params = req.params;
+  console.log("Params ", params);
+
+  const bookId = parseInt(params.bookId);
+
+  const bookIdx = BooksApi.findIndex((BookApi) => {
+    if (bookId === BookApi.id) return true;
+    else return false;
+  });
+
+  if (bookIdx === -1) {
+    return res.status(404).json({
+      message: "Book not found",
+    });
+  }
+
+  const updatedBooks = BooksApi.map((BookApi) => {
+    if (bookId === BookApi.id) {
+      // book found to update
+      return body;
+    } else {
+      return BookApi;
+    }
+  });
+
+  BooksApi = updatedBooks;
+
+  res.json({
+    message: "Books Store updated.",
+    data: updatedBooks,
+  });
 });
 
 app.listen(5000, () => {
