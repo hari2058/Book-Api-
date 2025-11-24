@@ -15,6 +15,7 @@ import { addBooksController } from "./controllers/addBooksController";
 import { getBookByIdController } from "./controllers/getBookByIdController";
 import { deleteBookController } from "./controllers/deleteBookControllers";
 import { updateBookController } from "./controllers/updateBookController";
+import { getAllBooksController } from "./controllers/getAllBooksController";
 
 const app = express();
 
@@ -24,61 +25,7 @@ app.use(express.json());
 app.post("/bookapi", addBooksController);
 
 //Get all book information from book api also filter using author and genre
-app.get("/bookapi", (req, res) => {
-  const { Author, Genre } = req.query;
-  const query = req.query;
-  console.log("Query Received", query);
-
-  const authorName = Author;
-  const genreName = Genre;
-
-  let result = BooksApi;
-
-  if (!query.Author && !query.Genre) {
-    return res.json({
-      message: "Books Information Fetched",
-      data: BooksApi,
-    });
-  }
-
-  let authorResult: BookApi[] = [];
-  let genreResult: BookApi[] = [];
-
-  if (Author) {
-    const author = BooksApi.filter((BookApi) => {
-      if (authorName === BookApi.Author) return true;
-      else return false;
-    });
-
-    if (author.length === 0) {
-      return res.status(404).json({
-        message: `Match not found for author '${Author}'.`,
-      });
-    }
-    authorResult = author;
-  }
-
-  if (Genre) {
-    const genre = BooksApi.filter((BookApi) => {
-      if (genreName === BookApi.Genre) return true;
-      else return false;
-    });
-    if (genre.length === 0) {
-      return res.status(404).json({
-        message: `Match not found for genre '${Genre}'.`,
-      });
-    }
-
-    genreResult = genre;
-  }
-
-  res.json({
-    message: `Book Fetched`,
-    authorData: Author ? authorResult : undefined,
-    genreData: Genre ? genreResult : undefined,
-  });
-  return;
-});
+app.get("/bookapi", getAllBooksController);
 
 //Get book information by id from book api stores
 app.get("/bookapi/:bookId", getBookByIdController);

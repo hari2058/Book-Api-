@@ -15,6 +15,14 @@ export function addBooks(BookData: BookApi) {
 }
 
 export function getAllBooks() {
+
+ 
+
+   
+
+   let authorResult: BookApi[] = [];
+   let genreResult: BookApi[] = [];
+
   return BooksApi;
 }
 
