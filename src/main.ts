@@ -10,38 +10,18 @@ update a book
  */
 
 import express from "express";
-import { start } from "repl";
+import { BookApi, BooksApi } from "./models/Book_Stores_model";
+import { addBooksController } from "./controllers/addBooksController";
+import { getBookByIdController } from "./controllers/getBookByIdController";
+import { deleteBookController } from "./controllers/deleteBookControllers";
+import { updateBookController } from "./controllers/updateBookController";
 
-interface BookApi {
-  id: number;
-  Title: string;
-  Author: string;
-  Genre: string;
-  Status: "COMPLETED" | "ONGOING" | "DROPPED";
-  Date: number;
-}
-// const body: BookApi = [];
-
-let BooksApi: BookApi[] = [];
 const app = express();
 
 app.use(express.json());
 
 //Create book api route
-app.post("/bookapi", (req, res) => {
-  console.log("Body", req.body);
-
-  // const NewApi: BookApi = req.body;
-
-  const NewBookApi: BookApi = req.body;
-
-  BooksApi.push(NewBookApi);
-
-  res.json({
-    message: "Book Api's created.",
-    Data: NewBookApi,
-  });
-});
+app.post("/bookapi", addBooksController);
 
 //Get all book information from book api also filter using author and genre
 app.get("/bookapi", (req, res) => {
@@ -101,33 +81,9 @@ app.get("/bookapi", (req, res) => {
 });
 
 //Get book information by id from book api stores
-app.get("/bookapi/:bookId", (req, res) => {
-  const params = req.params;
-  console.log("params", params);
+app.get("/bookapi/:bookId", getBookByIdController);
 
-  const bookId = parseInt(params.bookId);
-
-  const bookIdx = BooksApi.findIndex((BookApi) => {
-    if (bookId === BookApi.id) return true;
-    else return false;
-  });
-
-  if (bookIdx === -1) {
-    //Book is not found
-
-    res.status(404).json({
-      message: `Book not found by Id ${bookId}`,
-    });
-    return;
-  }
-
-  //todo is found to display it
-  res.json({
-    message: "Fetched Book by id.",
-    data: BooksApi[bookIdx],
-  });
-
-  /* 
+/* 
 
 mathi ko ma findindex na gare rw direct arko method le pani find garna milxa 
 id find gare rw direct id ko object lai call garni 
@@ -155,68 +111,11 @@ const book = BooksApi.find((BookApi) => {
   });
 
 */
-});
 
-app.delete("/bookapi/:bookId", (req, res) => {
-  const params = req.params;
-  console.log("Params", params);
+app.delete("/bookapi/:bookId", deleteBookController);
 
-  const bookId = parseInt(params.bookId);
-
-  const bookIdx = BooksApi.findIndex((BookApi) => {
-    if (bookId === BookApi.id) return true;
-    else return false;
-  });
-
-  if (bookIdx === -1) {
-    return res.json({
-      message: `Book not found by id ${bookId}`,
-    });
-  }
-
-  const splicedBook = BooksApi.splice(bookIdx, 1);
-  console.log("Sliced Book", splicedBook);
-
-  res.json({
-    message: "Deleted Book From Books Store",
-    Data: splicedBook,
-  });
-});
-
-app.put("/bookapi/:bookId", (req, res) => {
-  const body: BookApi = req.body;
-  const params = req.params;
-  console.log("Params ", params);
-
-  const bookId = parseInt(params.bookId);
-
-  const bookIdx = BooksApi.findIndex((BookApi) => {
-    if (bookId === BookApi.id) return true;
-    else return false;
-  });
-
-  if (bookIdx === -1) {
-    return res.status(404).json({
-      message: "Book not found",
-    });
-  }
-
-  const updatedBooks = BooksApi.map((BookApi) => {
-    if (bookId === BookApi.id) {
-      // book found to update
-      return body;
-    } else {
-      return BookApi;
-    }
-  });
-
-  BooksApi = updatedBooks;
-
-  res.json({
-    message: "Books Store updated.",
-    data: updatedBooks,
-  });
-});
+// update books stores
+app.put("/bookapi/:bookId", updateBookController);
 
 app.listen(5000, () => {
   console.log("Listening on http://localhost:5000 ");
