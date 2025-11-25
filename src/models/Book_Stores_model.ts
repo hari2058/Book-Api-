@@ -15,19 +15,10 @@ export function addBooks(BookData: BookApi) {
 }
 
 export function getAllBooks() {
-
- 
-
-   
-
-   let authorResult: BookApi[] = [];
-   let genreResult: BookApi[] = [];
-
   return BooksApi;
 }
 
 export function getBooksById(bookId: number) {
-
   const bookIdx = BooksApi.findIndex((BookApi) => {
     if (BookApi.id === bookId) return true;
     else return false;
@@ -43,12 +34,11 @@ export function getBooksById(bookId: number) {
 }
 
 export function deleteBooks(bookId: number) {
+  const booksData = getBooksById(bookId);
 
-   const booksData = getBooksById(bookId);
-
-   if (!booksData.data) {
-     throw new Error(`Books not found by id ${bookId}`);
-   }
+  if (!booksData.data) {
+    throw new Error(`Books not found by id ${bookId}`);
+  }
 
   const splicedBook = BooksApi.splice(booksData.Idx, 1);
   return splicedBook;
