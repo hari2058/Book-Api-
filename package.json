@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx --watch src/main.ts"
+    "dev": "tsx --watch src/main.ts",
+    "db": "tsx --watch src/lib/mysql2.ts"
   },
   "author": "",
   "license": "ISC",
