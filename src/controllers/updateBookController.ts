@@ -1,13 +1,14 @@
 import { Request, Response } from "express";
-import { updateBooks } from "../models/Book_Stores_model";
+import { updateBooks } from "../sql_models/book_store.model";
 
-export const updateBookController = (req: Request, res: Response) => {
+
+export const updateBookController = async  (req: Request, res: Response) => {
   const body = req.body;
   const params = req.params;
 
   const bookId = parseInt(params.bookId as string);
 
-  const updatedBooks = updateBooks(bookId, body);
+  const updatedBooks = await updateBooks(bookId, body);
 
   res.json({
     message: "Books Store updated.",
